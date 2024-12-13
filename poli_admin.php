@@ -1,33 +1,8 @@
 <?php
 session_start();
-include 'config/database.php';
 
 $nama = $_SESSION['nama'];
 $role = $_SESSION['role'];
-
-// menghitung jumlah pasien
-$query = "SELECT COUNT(*) as jumlah FROM pasien";
-$result = mysqli_query($mysqli, $query);
-$row = mysqli_fetch_assoc($result);
-$jmlPasien = $row['jumlah'];
-
-// menghitung jumlah dokter
-$query = "SELECT COUNT(*) as jumlah FROM dokter";
-$result = mysqli_query($mysqli, $query);
-$row = mysqli_fetch_assoc($result);
-$jmlDokter = $row['jumlah'];
-
-// menghitung jumlah poli
-$query = "SELECT COUNT(*) as jumlah FROM poli";
-$result = mysqli_query($mysqli, $query);
-$row = mysqli_fetch_assoc($result);
-$jmlPoli = $row['jumlah'];
-
-// menghitung jumlah obat
-$query = "SELECT COUNT(*) as jumlah FROM obat";
-$result = mysqli_query($mysqli, $query);
-$row = mysqli_fetch_assoc($result);
-$jmlObat = $row['jumlah'];
 
 if ($nama == "") {
   header("location:login_dokter.php");
@@ -128,7 +103,7 @@ if ($nama == "") {
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="dashboard_admin.php">
+        <a class="nav-link collapsed" href="dashboard_admin.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -152,7 +127,7 @@ if ($nama == "") {
       <!-- End Pasien Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="poli_admin.php">
+        <a class="nav-link" href="poli_admin.php">
           <i class="bi bi-building"></i>
           <span>Poli</span>
         </a>
@@ -172,11 +147,11 @@ if ($nama == "") {
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Daftar Pasien</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item"><a href="dashboard_admin.php">Home</a></li>
+          <li class="breadcrumb-item active">Pasien</li>
         </ol>
       </nav>
     </div>
@@ -184,94 +159,80 @@ if ($nama == "") {
 
     <section class="section dashboard">
       <div class="row">
-
         <!-- Left side columns -->
-        <div class="col-lg-12">
+        <div class="col-lg-4">
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Tambah Poli</h5>
+              <form action="src/poli/add.php" method="post" class="row g-3">
+                <div class="col-12">
+                  <label for="inputNamaPoli" class="form-label">Nama Poli</label>
+                  <input type="text" class="form-control" id="inputNamaPoli" name="nama_poli" />
+                </div>
+                <div class="col-12">
+                  <label for="inputKeterangan" class="form-label">Keterangan</label>
+                  <textarea class="form-control" id="inputKeterangan" name="keterangan"></textarea>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">
+                    Tambah
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- End Recent Activity -->
+        </div>
+        <!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-8">
           <div class="row">
-            <!-- Pasien Card -->
-            <div class="col-xxl-3 col-md-6">
-              <div class="card info-card pasien-card">
+            <!-- Reports -->
+            <div class="col-12">
+              <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Pasien</h5>
+                  <h5 class="card-title">Daftar Poli</h5>
 
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $jmlPasien ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Pasien</span>
-
-                    </div>
-                  </div>
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        <th>No</th>
+                        <th>Nama Poli</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      require 'config/database.php';
+                      $no = 1;
+                      $query = "SELECT * FROM poli";
+                      $result = mysqli_query($mysqli, $query);
+                      while ($data = mysqli_fetch_array($result)) {
+                      ?>
+                        <tr>
+                          <td><?php echo $no++ ?></td>
+                          <td><?php echo $data['nama_poli'] ?></td>
+                          <td><?php echo $data['keterangan'] ?></td>
+                          <td>
+                            <button type='button' class='btn btn-sm btn-primary' data-toggle="modal"
+                              data-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
+                            <button type='button' class='btn btn-sm btn-danger' data-toggle="modal"
+                              data-target="#hapusModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                      <?php } ?>
+                    </tbody>
+                  </table>
                 </div>
-
               </div>
             </div>
-            <!-- End Pasien Card -->
-
-            <!-- Dokter Card -->
-            <div class="col-xxl-3 col-md-6">
-              <div class="card info-card dokter-card">
-                <div class="card-body">
-                  <h5 class="card-title">Dokter</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-person-plus"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $jmlDokter ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Dokter</span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- End Dokter Card -->
-
-            <!-- Poli Card -->
-            <div class="col-xxl-3 col-md-6">
-              <div class="card info-card poli-card">
-                <div class="card-body">
-                  <h5 class="card-title">Poli</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-building"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $jmlPoli ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Poli</span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- End Poli Card -->
-            <!-- Obat Card -->
-            <div class="col-xxl-3 col-md-6">
-              <div class="card info-card obat-card">
-                <div class="card-body">
-                  <h5 class="card-title">Obat</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-capsule"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $jmlObat ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Obat</span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- End Obat Card -->
+            <!-- End Reports -->
           </div>
         </div>
+        <!-- End Right side columns -->
       </div>
     </section>
   </main>

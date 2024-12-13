@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2024 at 03:27 PM
+-- Generation Time: Dec 13, 2024 at 05:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,8 @@ CREATE TABLE `dokter` (
 --
 
 INSERT INTO `dokter` (`id`, `nama`, `password`, `alamat`, `no_hp`, `id_poli`) VALUES
-(2, 'Walter White', 'fd1618b5184243f6941c5c496aff6b42', '123 Main Street, Albuquerque, NM', '0812345678', 1);
+(2, 'Walter White', 'fd1618b5184243f6941c5c496aff6b42', '123 Main Street, Albuquerque, NM', '0812345678', 1),
+(3, 'Sarah Johnson', 'ec26202651ed221cf8f993668c459d46', '456 Elm Street, Boston, MA', '0812345679', 2);
 
 -- --------------------------------------------------------
 
@@ -98,6 +99,13 @@ CREATE TABLE `obat` (
   `harga` int(10) UNSIGNED DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `obat`
+--
+
+INSERT INTO `obat` (`id`, `nama_obat`, `kemasan`, `harga`) VALUES
+(1, 'Paracetamol', '10 tablet', 10000);
+
 -- --------------------------------------------------------
 
 --
@@ -119,7 +127,8 @@ CREATE TABLE `pasien` (
 --
 
 INSERT INTO `pasien` (`id`, `nama`, `alamat`, `no_ktp`, `password`, `no_hp`, `no_rm`) VALUES
-(1, 'Novan', 'Semarang', '3329090404040001', '85db37771715be103a787ae6c9fe3d08', '087730303030', '202412-001');
+(1, 'Novan', 'Semarang', '3329090404040001', '85db37771715be103a787ae6c9fe3d08', '087730303030', '202412-001'),
+(3, 'Maulana', 'Brebes', '3329090909090004', 'ad060c9b2f5617a5c2ddda20253b1f23', '087730303039', '202412-002');
 
 -- --------------------------------------------------------
 
@@ -154,7 +163,8 @@ CREATE TABLE `poli` (
 INSERT INTO `poli` (`id`, `nama_poli`, `keterangan`) VALUES
 (1, 'Poli Umum', 'Layanan medis yang menyediakan pemeriksaan kesehatan umum dan pengobatan bagi pasien dengan keluhan atau penyakit yang tidak memerlukan penanganan spesialis.'),
 (2, 'Poli Gigi', 'Layanan medis yang menyediakan pemeriksaan kesehatan gigi dan mulut serta pengobatan bagi pasien dengan keluhan atau penyakit yang berkaitan dengan gigi dan mulut.'),
-(3, 'Poli Anak', 'Layanan medis yang menyediakan pemeriksaan kesehatan anak dan pengobatan bagi pasien dengan keluhan atau penyakit yang berkaitan dengan kesehatan anak.');
+(3, 'Poli Anak', 'Layanan medis yang menyediakan pemeriksaan kesehatan anak dan pengobatan bagi pasien dengan keluhan atau penyakit yang berkaitan dengan kesehatan anak.'),
+(4, 'Poli Gizi', 'Layanan medis yang menyediakan pemeriksaan kesehatan gizi dan pengobatan bagi pasien dengan keluhan atau penyakit yang berkaitan dengan kesehatan gizi.');
 
 --
 -- Indexes for dumped tables
@@ -235,7 +245,7 @@ ALTER TABLE `detail_periksa`
 -- AUTO_INCREMENT for table `dokter`
 --
 ALTER TABLE `dokter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `jadwal_periksa`
@@ -247,13 +257,13 @@ ALTER TABLE `jadwal_periksa`
 -- AUTO_INCREMENT for table `obat`
 --
 ALTER TABLE `obat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `periksa`
@@ -265,7 +275,7 @@ ALTER TABLE `periksa`
 -- AUTO_INCREMENT for table `poli`
 --
 ALTER TABLE `poli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
