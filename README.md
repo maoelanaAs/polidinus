@@ -28,3 +28,7 @@ klik tombol "Sebagai Dokter" dan login dengan masukkan:
   Nama     : Admin
   Password : admin123
 ```
+
+## Regist & Login Pasien
+
+klik tombol "Buat Janji" dan registrasi seperti biasanya

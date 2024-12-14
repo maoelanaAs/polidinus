@@ -147,11 +147,11 @@ if ($nama == "") {
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Daftar Pasien</h1>
+      <h1>Daftar Poli</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="dashboard_admin.php">Home</a></li>
-          <li class="breadcrumb-item active">Pasien</li>
+          <li class="breadcrumb-item active">Poli</li>
         </ol>
       </nav>
     </div>
@@ -212,17 +212,77 @@ if ($nama == "") {
                       $result = mysqli_query($mysqli, $query);
                       while ($data = mysqli_fetch_array($result)) {
                       ?>
-                        <tr>
-                          <td><?php echo $no++ ?></td>
-                          <td><?php echo $data['nama_poli'] ?></td>
-                          <td><?php echo $data['keterangan'] ?></td>
-                          <td>
-                            <button type='button' class='btn btn-sm btn-primary' data-toggle="modal"
-                              data-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
-                            <button type='button' class='btn btn-sm btn-danger' data-toggle="modal"
-                              data-target="#hapusModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
+                      <tr>
+                        <td><?php echo $no++ ?></td>
+                        <td><?php echo $data['nama_poli'] ?></td>
+                        <td><?php echo $data['keterangan'] ?></td>
+                        <td>
+                          <button type='button' class='btn btn-sm btn-primary' data-bs-toggle="modal"
+                            data-bs-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
+                          <button type='button' class='btn btn-sm btn-danger' data-bs-toggle="modal"
+                            data-bs-target="#deleteModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
+                        </td>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal<?php echo $data['id']; ?>" tabindex="-1"
+                          aria-labelledby="updateModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">Ubah Data Poli</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/poli/edit.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id']; ?>">
+
+                                  <div class="col-12 mb-3">
+                                    <label for="editNamaPoli" class="form-label">Nama Poli</label>
+                                    <input type="text" class="form-control" id="editNamaPoli"
+                                      value="<?php echo $data['nama_poli'] ?>" name="nama_poli" />
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="editKeterangan" class="form-label">Keterangan</label>
+                                    <textarea class="form-control" id="editKeterangan" rows="3"
+                                      name="keterangan"><?php echo $data['keterangan'] ?></textarea>
+                                  </div>
+                                  <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                      Ubah
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Update Modal-->
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?php echo $data['id'] ?>" tabindex="-1">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Hapus Data Poli</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/poli/delete.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id'] ?>" required>
+                                  <p>Apakah anda yakin untuk menghapus data
+                                    <b><?php echo $data['nama_poli'] ?></b>?<span></span>
+                                  </p>
+                                  <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Delete Modal -->
+                      </tr>
                       <?php } ?>
                     </tbody>
                   </table>

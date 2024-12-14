@@ -187,7 +187,7 @@ if ($nama == "") {
                     $result = mysqli_query($mysqli, $query);
                     while ($dataPoli = mysqli_fetch_array($result)) {
                     ?>
-                      <option value="<?php echo $dataPoli['id'] ?>"><?php echo $dataPoli['nama_poli'] ?></option>
+                    <option value="<?php echo $dataPoli['id'] ?>"><?php echo $dataPoli['nama_poli'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -231,23 +231,107 @@ if ($nama == "") {
                       <?php
                       require 'config/database.php';
                       $no = 1;
-                      $query = "SELECT dokter.id, dokter.nama, dokter.alamat, dokter.no_hp, poli.nama_poli FROM dokter INNER JOIN poli ON dokter.id_poli = poli.id";
+                      $query = "SELECT dokter.id, dokter.nama, dokter.alamat, dokter.no_hp, poli.nama_poli, dokter.password FROM dokter INNER JOIN poli ON dokter.id_poli = poli.id";
                       $result = mysqli_query($mysqli, $query);
                       while ($data = mysqli_fetch_array($result)) {
                       ?>
-                        <tr>
-                          <td><?php echo $no++ ?></td>
-                          <td><?php echo $data['nama'] ?></td>
-                          <td><?php echo $data['alamat'] ?></td>
-                          <td><?php echo $data['no_hp'] ?></td>
-                          <td><?php echo $data['nama_poli'] ?></td>
-                          <td>
-                            <button type='button' class='btn btn-sm btn-primary' data-toggle="modal"
-                              data-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
-                            <button type='button' class='btn btn-sm btn-danger' data-toggle="modal"
-                              data-target="#hapusModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
+                      <tr>
+                        <td><?php echo $no++ ?></td>
+                        <td><?php echo $data['nama'] ?></td>
+                        <td><?php echo $data['alamat'] ?></td>
+                        <td><?php echo $data['no_hp'] ?></td>
+                        <td><?php echo $data['nama_poli'] ?></td>
+                        <td>
+                          <button type='button' class='btn btn-sm btn-primary' data-bs-toggle="modal"
+                            data-bs-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
+                          <button type='button' class='btn btn-sm btn-danger' data-bs-toggle="modal"
+                            data-bs-target="#deleteModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
+                        </td>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal<?php echo $data['id']; ?>" tabindex="-1"
+                          aria-labelledby="updateModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">Ubah Data Dokter</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/dokter/edit.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id']; ?>">
+
+                                  <div class="col-12 mb-3">
+                                    <label for="editNama" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" id="editNama"
+                                      value="<?php echo $data['nama'] ?>" name="nama" />
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="editAlamat" class="form-label">Alamat</label>
+                                    <textarea class="form-control" id="editAlamat" rows="3"
+                                      name="alamat"><?php echo $data['alamat'] ?></textarea>
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="editNoHP" class="form-label">No. HP</label>
+                                    <input type="text" class="form-control" id="editNoHP"
+                                      value="<?php echo $data['no_hp'] ?>" name="no_hp" />
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="selectPoli" class="mb-2">Poli</label>
+                                    <select class="form-select" id="selectPoli" name="poli">
+                                      <?php
+                                        require 'config/database.php';
+                                        $query = "SELECT * FROM poli";
+                                        $result = mysqli_query($mysqli, $query);
+                                        while ($dataPoli = mysqli_fetch_array($result)) {
+                                          $selected = $dataPolii['id'];
+                                        ?>
+                                      <option value="<?php echo $dataPoli['id'] ?>"><?php echo $dataPoli['nama_poli'] ?>
+                                      </option>
+                                      <?php } ?>
+                                    </select>
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="editPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="editPassword" name="password" />
+                                  </div>
+                                  <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                      Ubah
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Update Modal-->
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?php echo $data['id'] ?>" tabindex="-1">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Hapus Data Dokter</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/dokter/delete.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id'] ?>" required>
+                                  <p>Apakah anda yakin untuk menghapus data
+                                    <b><?php echo $data['nama'] ?></b>?<span></span>
+                                  </p>
+                                  <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Delete Modal -->
+                      </tr>
                       <?php } ?>
                     </tbody>
                   </table>
