@@ -29,6 +29,15 @@ klik tombol "Sebagai Dokter" dan login dengan masukkan:
   Password : admin123
 ```
 
+## Login Dokter
+
+klik tombol "Sebagai Dokter" dan login dengan masukkan Nama dan Password, contoh:
+
+```bash
+  Nama     : Walter White
+  Password : walter123
+```
+
 ## Regist & Login Pasien
 
 klik tombol "Buat Janji" dan registrasi seperti biasanya
