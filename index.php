@@ -73,27 +73,26 @@ $jmlPoli = $data['jumlah'];
             <li><a href="#departments">Poli</a></li>
             <li><a href="#doctors">Dokter</a></li>
             <?php if ($isLogin && $role === 'Pasien'): ?>
-            <li class="dropdown">
-              <a href="#" class="fw-bold"><span><?php echo $nama ?></span>
-                <i class="bi bi-person-circle toggle-dropdown fs-5 ms-2"></i></a>
-              <ul>
-                <li>
-                  <a data-bs-toggle="modal" href="#appointmentHistoryModalToggle" role="button">Riwayat Periksa</a>
-                </li>
-                <li><a href="src/logout.php">Keluar</a></li>
-              </ul>
-            </li>
+              <li class="dropdown">
+                <a href="#" class="fw-bold"><span><?php echo $nama ?></span>
+                  <i class="bi bi-person-circle toggle-dropdown fs-5 ms-2"></i></a>
+                <ul>
+                  <li>
+                    <a data-bs-toggle="modal" href="#appointmentHistoryModalToggle" role="button">Riwayat Periksa</a>
+                  </li>
+                  <li><a href="src/logout.php">Keluar</a></li>
+                </ul>
+              </li>
             <?php endif; ?>
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
         <?php if (!$isLogin): ?>
-        <a class="adl-btn d-none d-sm-block" href="login_dokter.php">Sebagai Dokter</a>
+          <a class="adl-btn d-none d-sm-block" href="login_dokter.php">Sebagai Dokter</a>
         <?php endif; ?>
 
-        <a class="cta-btn d-none d-sm-block"
-          href="<?php echo $isLogin ? '#appointment' : 'register_pasien.php'; ?>">Buat
+        <a class="cta-btn d-none d-sm-block" href="<?php echo $isLogin ? 'register_pasien.php' : '#appointment' ?>">Buat
           Janji</a>
 
       </div>
@@ -124,7 +123,7 @@ $jmlPoli = $data['jumlah'];
                 kemudahan, kualitas, dan kepedulian dalam satu tempat.
               </p>
               <div class="text-center">
-                <a href="<?php echo $isLogin ? '#appointment' : 'register_pasien.php'; ?>" class="more-btn"><span>Buat
+                <a href="<?php echo $isLogin ? 'register_pasien.php' : '#appointment' ?>" class="more-btn"><span>Buat
                     Janji</span> <i class="bi bi-chevron-right"></i></a>
               </div>
             </div>
@@ -173,64 +172,66 @@ $jmlPoli = $data['jumlah'];
     <!-- /Hero Section -->
 
     <!-- Appointment Section -->
-    <section id="appointment" class="appointment section">
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Buat Janji Temu</h2>
-        <p>
-          Buat janji temu dengan dokter pilihan Anda secara mudah dan cepat
-        </p>
-      </div>
-      <!-- End Section Title -->
+    <?php if ($isLogin && $role === 'Pasien'): ?>
+      <section id="appointment" class="appointment section">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Buat Janji Temu</h2>
+          <p>
+            Buat janji temu dengan dokter pilihan Anda secara mudah dan cepat
+          </p>
+        </div>
+        <!-- End Section Title -->
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
-          <div class="row align-items-center">
-            <div class="col-md-8">
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="input_name" placeholder="Nama Lengkap"
-                    required disabled />
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input type="text" name="name" class="form-control" id="input_name" placeholder="Nama Lengkap"
+                      required disabled />
+                  </div>
+                  <div class="col-md-6 form-group mt-3 mt-md-0">
+                    <input type="text" class="form-control" name="medrec" id="input_medrec" placeholder="No. Rekam Medis"
+                      required disabled />
+                  </div>
                 </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="text" class="form-control" name="medrec" id="input_medrec" placeholder="No. Rekam Medis"
-                    required disabled />
+                <div class="row">
+                  <div class="col-md-6 form-group mt-3">
+                    <select name="department" id="department" class="form-select" required="">
+                      <option value="">Pilih Poli</option>
+                      <option value="Department 1">Department 1</option>
+                      <option value="Department 2">Department 2</option>
+                      <option value="Department 3">Department 3</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group mt-3">
+                    <select name="doctor" id="doctor" class="form-select" required="">
+                      <option value="">Pilih Dokter & Jadwal</option>
+                      <option value="Doctor 1">Doctor 1</option>
+                      <option value="Doctor 2">Doctor 2</option>
+                      <option value="Doctor 3">Doctor 3</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-6 form-group mt-3">
-                  <select name="department" id="department" class="form-select" required="">
-                    <option value="">Pilih Poli</option>
-                    <option value="Department 1">Department 1</option>
-                    <option value="Department 2">Department 2</option>
-                    <option value="Department 3">Department 3</option>
-                  </select>
-                </div>
-                <div class="col-md-6 form-group mt-3">
-                  <select name="doctor" id="doctor" class="form-select" required="">
-                    <option value="">Pilih Dokter & Jadwal</option>
-                    <option value="Doctor 1">Doctor 1</option>
-                    <option value="Doctor 2">Doctor 2</option>
-                    <option value="Doctor 3">Doctor 3</option>
-                  </select>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <textarea class="form-control" name="complaint" rows="4" placeholder="Keluhan"></textarea>
                 </div>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <textarea class="form-control" name="complaint" rows="4" placeholder="Keluhan"></textarea>
-              </div>
-            </div>
-          </div>
 
-          <div class="mt-3">
-            <div class="text-center">
-              <button type="submit">Buat Janji Temu</button>
+            <div class="mt-3">
+              <div class="text-center">
+                <button type="submit">Buat Janji Temu</button>
+              </div>
             </div>
-          </div>
-        </form>
-      </div>
-    </section>
+          </form>
+        </div>
+      </section>
+    <?php endif; ?>
     <!-- /Appointment Section -->
 
     <!-- Departments Section -->
