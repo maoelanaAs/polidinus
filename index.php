@@ -93,7 +93,7 @@ $jmlPoli = $data['jumlah'];
         <?php endif; ?>
 
         <a class="cta-btn d-none d-sm-block"
-          href="<?php $isLogin && $role === 'Pasien' ? 'register_pasien.php' : '#appointment' ?>">Buat
+          href="<?php echo $isLogin && $role === 'Pasien' ? '#appointment' : 'register_pasien.php' ?>">Buat
           Janji</a>
 
       </div>
@@ -124,7 +124,7 @@ $jmlPoli = $data['jumlah'];
                 kemudahan, kualitas, dan kepedulian dalam satu tempat.
               </p>
               <div class="text-center">
-                <a href="<?php echo $isLogin && $role === 'Pasien' ? 'register_pasien.php' : '#appointment' ?>"
+                <a href="<?php echo $isLogin && $role === 'Pasien' ? '#appointment' : 'register_pasien.php' ?>"
                   class="more-btn"><span>Buat
                     Janji</span> <i class="bi bi-chevron-right"></i></a>
               </div>
