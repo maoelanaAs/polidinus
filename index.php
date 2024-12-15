@@ -92,7 +92,8 @@ $jmlPoli = $data['jumlah'];
         <a class="adl-btn d-none d-sm-block" href="login_dokter.php">Sebagai Dokter</a>
         <?php endif; ?>
 
-        <a class="cta-btn d-none d-sm-block" href="<?php echo $isLogin ? 'register_pasien.php' : '#appointment' ?>">Buat
+        <a class="cta-btn d-none d-sm-block"
+          href="<?php $isLogin && $role === 'Pasien' ? 'register_pasien.php' : '#appointment' ?>">Buat
           Janji</a>
 
       </div>
@@ -123,7 +124,8 @@ $jmlPoli = $data['jumlah'];
                 kemudahan, kualitas, dan kepedulian dalam satu tempat.
               </p>
               <div class="text-center">
-                <a href="<?php echo $isLogin ? 'register_pasien.php' : '#appointment' ?>" class="more-btn"><span>Buat
+                <a href="<?php echo $isLogin && $role === 'Pasien' ? 'register_pasien.php' : '#appointment' ?>"
+                  class="more-btn"><span>Buat
                     Janji</span> <i class="bi bi-chevron-right"></i></a>
               </div>
             </div>
