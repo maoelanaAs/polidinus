@@ -2,6 +2,7 @@
 session_start();
 include 'config/database.php';
 
+$isLogin = $_SESSION['isLogin'];
 $nama = $_SESSION['nama'];
 $role = $_SESSION['role'];
 
@@ -29,8 +30,8 @@ $result = mysqli_query($mysqli, $query);
 $row = mysqli_fetch_assoc($result);
 $jmlObat = $row['jumlah'];
 
-if ($nama == "") {
-  header("location:login_dokter.php");
+if (!$isLogin) {
+  header('Location: login_dokter.php');
 }
 
 ?>
@@ -77,7 +78,7 @@ if ($nama == "") {
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="" />
         <span class="d-none d-lg-block">Poliklinik</span>
       </a>
@@ -175,7 +176,7 @@ if ($nama == "") {
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>

@@ -52,7 +52,7 @@ if ($nama == "") {
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="" />
         <span class="d-none d-lg-block">Poliklinik</span>
       </a>
@@ -285,7 +285,7 @@ if ($nama == "") {
                                         $query = "SELECT * FROM poli";
                                         $result = mysqli_query($mysqli, $query);
                                         while ($dataPoli = mysqli_fetch_array($result)) {
-                                          $selected = $dataPolii['id'];
+                                          $se
                                         ?>
                                       <option value="<?php echo $dataPoli['id'] ?>"><?php echo $dataPoli['nama_poli'] ?>
                                       </option>

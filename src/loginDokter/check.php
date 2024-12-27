@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $_SESSION['nama'] = $nama;
     $_SESSION['password'] = $password;
     $_SESSION['role'] = "Admin";
+    $_SESSION['isLogin'] = true;
 
     header("location:../../dashboard_admin.php");
   } else {
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
       $_SESSION['password'] = $data['password'];
       $_SESSION['id_poli'] = $data['id_poli'];
       $_SESSION['role'] = "Dokter";
+      $_SESSION['isLogin'] = true;
 
       header("location:../../dashboard_dokter.php");
     } else {

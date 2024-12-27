@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $_SESSION['password'] = $data['password'];
     $_SESSION['no_rm'] = $data['no_rm'];
     $_SESSION['role'] = "Pasien";
+    $_SESSION['isLogin'] = true;
 
     header("location:../../index.php");
   } else {
