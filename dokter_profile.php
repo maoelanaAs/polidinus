@@ -18,23 +18,12 @@ $result = mysqli_query($mysqli, $query);
 $data = mysqli_fetch_assoc($result);
 $nama_poli = $data['nama_poli'];
 
-// menghitung jumlah jadwal
-$query = "SELECT COUNT(*) as jumlah FROM jadwal_periksa WHERE id_dokter = '$id_dokter'";
+// mendapatkan data dokter berdasarkan id
+$query = "SELECT * FROM dokter WHERE id = '$id_dokter'";
 $result = mysqli_query($mysqli, $query);
 $data = mysqli_fetch_assoc($result);
-$jmlJadwal = $data['jumlah'];
-
-// menghitung jumlah pasien yang pernah diperiksa
-$query = "SELECT COUNT(*) as jumlah FROM daftar_poli INNER JOIN pasien ON daftar_poli.id_pasien = pasien.id INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter'";
-$result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$jmlPasien = $data['jumlah'];
-
-// menghitung jumlah riwayat pasien
-$query = "SELECT COUNT(*) as jumlah FROM detail_periksa INNER JOIN periksa ON detail_periksa.id_periksa = periksa.id INNER JOIN daftar_poli ON periksa.id_daftar_poli = daftar_poli.id INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter' AND daftar_poli.status = '1'";
-$result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$jmlRiwayat = $data['jumlah'];
+$alamat = $data['alamat'];
+$no_hp = $data['no_hp'];
 
 if (!$isLogin) {
   header('Location: login_dokter.php');
@@ -138,7 +127,7 @@ if (!$isLogin) {
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link collapsed" href="index.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -174,83 +163,138 @@ if (!$isLogin) {
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>Profil Saya</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">Profil</li>
         </ol>
       </nav>
     </div>
     <!-- End Page Title -->
 
-    <section class="section dashboard">
+    <section class="section profile">
       <div class="row">
-        <!-- Left side columns -->
-        <div class="col-lg-12">
-          <div class="row justify-content-evenly">
-            <!-- Jadwal Card -->
-            <div class="col-xxl-3">
-              <div class="card info-card first-card">
-                <div class="card-body">
-                  <h5 class="card-title">Jadwal</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?= $jmlJadwal ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Jadwal</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              <img src="assets/img/doctor.jpg" alt="Profile" class="rounded-circle" />
+              <h2><?= $nama ?></h2>
+              <h3><?= $nama_poli ?></h3>
+              <h3><?= $no_hp ?></h3>
+              <h6><?= $alamat ?></h6>
             </div>
-            <!-- End Jadwal Card -->
-
-            <!-- Pasien Card -->
-            <div class="col-xxl-3">
-              <div class="card info-card second-card">
-                <div class="card-body">
-                  <h5 class="card-title">Pasien</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-person-plus"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?= $jmlPasien ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Pasien</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- End Pasien Card -->
-
-            <!-- Riwayat Card -->
-            <div class="col-xxl-3">
-              <div class="card info-card third-card">
-                <div class="card-body">
-                  <h5 class="card-title">Riwayat</h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-building"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?= $jmlRiwayat ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Riwayat</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- End Riwayat Card -->
           </div>
         </div>
-        <!-- End Left side columns -->
+
+        <div class="col-xl-8">
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-edit">
+                    Ubah Profil
+                  </button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">
+                    Ubah Kata Sandi
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content pt-2">
+                <div class="tab-pane show active fade profile-edit pt-3" id="profile-edit">
+                  <!-- Profile Edit Form -->
+                  <form action="src/profile/update.php" method="post">
+                    <input type="hidden" name="id" value="<?= $id_dokter ?>" />
+                    <div class="row mb-3">
+                      <label for="inputNama" class="col-md-4 col-lg-3 col-form-label">Nama Lengkap</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="nama" type="text" class="form-control" id="inputNama" value="<?= $nama ?>" />
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="inputAlamat" class="col-md-4 col-lg-3 col-form-label">Alamat</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="alamat" type="text" class="form-control" id="inputAlamat" value="<?= $alamat ?>" />
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="inputNoHp" class="col-md-4 col-lg-3 col-form-label">Nomor HP</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="no_hp" type="text" class="form-control" id="inputNoHp" value="<?= $no_hp ?>" />
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="selectPoli" class="col-md-4 col-lg-3 col-form-label">Posisi Poli</label>
+                      <div class="col-md-8 col-lg-9">
+                        <!-- <select name="poli" id="selectPoli" class="form-control" aria-readonly="">
+                          <?php
+                          $query = "SELECT * FROM poli";
+                          $result = mysqli_query($mysqli, $query);
+                          while ($dataPoli = mysqli_fetch_array($result)) {
+                          ?>
+                          <option value="<?= $dataPoli['id'] ?>" <?= ($dataPoli['id'] == $id_poli) ? 'selected' : '' ?>>
+                            <?= $dataPoli['nama_poli'] ?>
+                          </option>
+                          <?php } ?>
+                        </select> -->
+                        <input type="text" class="form-control" value="<?= $nama_poli ?>" name="poli" id="selectPoli"
+                          readonly />
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">
+                        Ubah Profile
+                      </button>
+                    </div>
+                  </form>
+                  <!-- End Profile Edit Form -->
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+                  <form action="src/profile/password.php" method="post">
+                    <input type="hidden" name="id" value="<?= $id_dokter ?>" />
+                    <div class="row mb-3">
+                      <label for="passwordSekarang" class="col-md-4 col-lg-3 col-form-label">Kata Sandi
+                        Sekarang</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="password" type="password" class="form-control" id="passwordSekarang" />
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="passwordBaru" class="col-md-4 col-lg-3 col-form-label">Kata Sandi Baru</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="password_baru" type="password" class="form-control" id="passwordBaru" />
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="konfirmasiPassword" class="col-md-4 col-lg-3 col-form-label">Konfirmasi Kata
+                        Sandi</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="konfirmasi_password" type="password" class="form-control"
+                          id="konfirmasiPassword" />
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">
+                        Ubah Kata Sandi
+                      </button>
+                    </div>
+                  </form>
+                  <!-- End Change Password Form -->
+                </div>
+              </div>
+              <!-- End Bordered Tabs -->
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>

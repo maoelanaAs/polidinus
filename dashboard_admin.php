@@ -30,7 +30,7 @@ $result = mysqli_query($mysqli, $query);
 $row = mysqli_fetch_assoc($result);
 $jmlObat = $row['jumlah'];
 
-if (!$isLogin) {
+if (!$isLogin && $role != 'admin') {
   header('Location: login_dokter.php');
 }
 

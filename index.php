@@ -6,9 +6,9 @@ session_start();
 $isLogin = isset($_SESSION['isLogin']) ? $_SESSION['isLogin'] : false;
 
 // Jika user sudah login, maka ambil data user
-$id_pasien = $isLogin ? $_SESSION['id'] : '';
-$nama = $isLogin ? $_SESSION['nama'] : '';
-$role = $isLogin ? $_SESSION['role'] : '';
+$id_pasien = $isLogin ? $_SESSION['id'] : null;
+$nama = $isLogin ? $_SESSION['nama'] : null;
+$role = $isLogin ? $_SESSION['role'] : null;
 
 // jika role adalah dokter, maka pindah ke dashboard dokter
 if ($isLogin && $role === 'Dokter') {
@@ -206,7 +206,7 @@ $jmlPoli = $data['jumlah'];
               <div class="col-12">
                 <label for="inputNo_RM" class="form-label fw-bold">No. Rekam Medis</label>
                 <input type="text" class="form-control" id="inputNo_RM" name="no_rm" value="<?= $_SESSION['no_rm'] ?>"
-                  disabled required />
+                  readonly required style="background-color: var(--bs-secondary-bg);" />
               </div>
               <div class="col-12">
                 <label for="selectPoli" class="form-label fw-bold">Pilih Poli</label>
@@ -432,10 +432,13 @@ $jmlPoli = $data['jumlah'];
 
   <!-- Detail Appointment Modal -->
   <?php
-  $query = "SELECT daftar_poli.id, poli.nama_poli, dokter.nama, jadwal_periksa.hari, DATE_FORMAT(jadwal_periksa.jam_mulai, '%H:%i') as jam_mulai, DATE_FORMAT(jadwal_periksa.jam_selesai, '%H:%i') as jam_selesai, daftar_poli.no_antrian, daftar_poli.keluhan FROM daftar_poli INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id INNER JOIN poli ON dokter.id_poli = poli.id WHERE daftar_poli.id_pasien = '$id_pasien'";
+  $query = "SELECT daftar_poli.id, dokter.nama, poli.nama_poli, jadwal_periksa.hari, DATE_FORMAT(jadwal_periksa.jam_mulai, '%H:%i') as jam_mulai, DATE_FORMAT(jadwal_periksa.jam_selesai, '%H:%i') as jam_selesai, obat.nama_obat, periksa.biaya_periksa, daftar_poli.no_antrian, daftar_poli.status, periksa.catatan, periksa.tgl_periksa FROM daftar_poli LEFT JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id LEFT JOIN dokter ON jadwal_periksa.id_dokter = dokter.id LEFT JOIN periksa ON periksa.id_daftar_poli = daftar_poli.id LEFT JOIN poli ON dokter.id_poli = poli.id LEFT JOIN detail_periksa ON detail_periksa.id_periksa = periksa.id LEFT JOIN obat ON detail_periksa.id_obat = obat.id WHERE (daftar_poli.id_pasien = '$id_pasien');";
   $result = mysqli_query($mysqli, $query);
 
   while ($data = mysqli_fetch_assoc($result)) {
+    echo "<pre>";
+    print_r($data); // Memeriksa isi data yang dihasilkan dari query
+    echo "</pre>";
   ?>
   <!-- Detail Modal -->
   <div class="modal fade" id="detailModal<?= $data['id'] ?>" tabindex="-1"
@@ -451,38 +454,37 @@ $jmlPoli = $data['jumlah'];
         </div>
         <div class="modal-body">
           <div class="row">
-            <div class="col-7">
-              <h2 class="lead"><b><?= $data['nama'] ?></b></h2>
-              <h6 class="text-muted text-lg">Poli <?= $data['nama_poli'] ?></h6>
-              <h6 class="text-muted text-lg"><?= $data['hari'] ?></h6>
-              <ul class="ml-4 mb-0 fa-ul text-muted">
-                <li class="large"><span class="fa-li"><i class="fas fa-lg fa-clock"></i></span>
-                  <?= $data['jam_mulai'] ?> - <?= $data['jam_selesai'] ?></li>
-              </ul>
-              <br><br>
-              <p class="text-muted text-lg"> Obat : <br>
+            <div class="col-8">
+              <h3 class="text-muted"><b><?= $data['nama'] ?></b> - <?= $data['nama_poli'] ?></h3>
+              <h6 class="text-muted text-lg"><?= $data['hari'] ?> | <?= $data['jam_mulai'] ?> -
+                <?= $data['jam_selesai'] ?></h6>
+              <br>
+              <h5>
+                <span
+                  class="badge bg-<?= $data['status'] == 1 ? 'success' : 'warning' ?>"><?= $data['status'] == 1 ? 'Sudah diperiksa' : 'Belum diperiksa' ?></span>
+              </h5>
+              <h4 class="text-muted text-lg"> Obat : </h4>
+              <p>
                 <?php
-                  $queryObat = "SELECT o.nama_obat FROM detail_periksa dp INNER JOIN obat o ON dp.id_obat = o.id WHERE dp.id_periksa = '$data[id]'";
-                  $resultObat = mysqli_query($mysqli, $queryObat);
-                  $namaObatArray = [];
-                  while ($dataObat = mysqli_fetch_assoc($resultObat)) {
-                    $namaObatArray[] = $dataObat['nama_obat'];
-                  }
+                  $namaObatArray = explode(',', $data['nama_obat']);
                   foreach ($namaObatArray as $index => $namaObat) {
                     echo ($index + 1) . ". " . $namaObat . "<br>";
                   }
                   ?>
               </p>
-              <h5 class="text-muted
-                                text-lg"><strong>Biaya Periksa : <?= $data['biaya_periksa'] ?></strong>
-              </h5>
+              <br>
+              <h2 class="text-muted"><strong>Biaya Periksa :
+                  <?= "Rp " . number_format($data['biaya_periksa'], 0, ',', '.') ?></strong>
+              </h2>
             </div>
-            <div class="col-5 flex
-                              justify-center items-center flex-col">
-              <h3 class="text-muted
-                                text-lg">Catatan</h3>
-
+            <div class="col-4 flex flex-col justify-center items-center">
+              <h4 class="text-muted">No Antrian</h4>
+              <h1><span class="badge bg-primary"><?= $data['no_antrian'] ?></span></h1>
+              <br>
+              <h4 class="text-muted text-lg">Catatan</h4>
               <p><?= $data['catatan'] ?></p>
+              <h4 class="text-muted text-lg">Tanggal Periksa</h4>
+              <p><?= $data['tgl_periksa'] ?></p>
             </div>
           </div>
         </div>

@@ -3,10 +3,14 @@ session_start();
 require 'config/database.php';
 
 $id_dokter = $_SESSION['id'];
-$nama = $_SESSION['nama'];
 $role = $_SESSION['role'];
-$id_poli = $_SESSION['id_poli'];
 $isLogin = $_SESSION['isLogin'];
+
+$query = "SELECT * FROM dokter WHERE id = '$id_dokter'";
+$result = mysqli_query($mysqli, $query);
+$data = mysqli_fetch_assoc($result);
+$nama = $data['nama'];
+$id_poli = $data['id_poli'];
 
 // mendapatkan nama poli berdasarkan id_poli
 $query = "SELECT * FROM poli WHERE id = '$id_poli'";

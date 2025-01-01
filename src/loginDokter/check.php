@@ -21,9 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
       $data = mysqli_fetch_assoc($result);
 
       $_SESSION['id'] = $data['id'];
-      $_SESSION['nama'] = $data['nama'];
-      $_SESSION['password'] = $data['password'];
-      $_SESSION['id_poli'] = $data['id_poli'];
       $_SESSION['role'] = "Dokter";
       $_SESSION['isLogin'] = true;
 
