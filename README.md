@@ -41,3 +41,10 @@ klik tombol "Sebagai Dokter" dan login dengan masukkan Nama dan Password, contoh
 ## Regist & Login Pasien
 
 klik tombol "Buat Janji" dan registrasi seperti biasanya
+
+atau bisa menggunakan data pasien default,
+
+```bash
+  NIK     : 3329090404040001
+  Password : novan123
+```
