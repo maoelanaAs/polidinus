@@ -1,4 +1,5 @@
 <?php
+
 include 'config/database.php';
 session_start();
 
@@ -12,12 +13,12 @@ $role = $isLogin ? $_SESSION['role'] : null;
 
 // jika role adalah dokter, maka pindah ke dashboard dokter
 if ($isLogin && $role === 'Dokter') {
-  header("location:dashboard_dokter.php");
+  header('location:dokter_dashboard.php');
 }
 
 // jika role adalah admin, maka pindah ke dashboard admin
 if ($isLogin && $role === 'Admin') {
-  header("location:dashboard_admin.php");
+  header('location:admin_dashboard.php');
 }
 
 // Menghitung jumlah dokter
@@ -103,11 +104,11 @@ $jmlPoli = $data['jumlah'];
         </nav>
 
         <?php if (!$isLogin): ?>
-        <a class="adl-btn d-none d-sm-block" href="login_dokter.php">Sebagai Dokter</a>
+        <a class="adl-btn d-none d-sm-block" href="dokter_login.php">Sebagai Dokter</a>
         <?php endif; ?>
 
         <a class="cta-btn d-none d-sm-block"
-          href="<?= $isLogin && $role === 'Pasien' ? '#appointment' : 'register_pasien.php' ?>">Buat
+          href="<?= $isLogin && $role === 'Pasien' ? '#appointment' : 'pasien_register.php' ?>">Buat
           Janji</a>
 
       </div>
@@ -138,7 +139,7 @@ $jmlPoli = $data['jumlah'];
                 kemudahan, kualitas, dan kepedulian dalam satu tempat.
               </p>
               <div class="text-center">
-                <a href="<?= $isLogin && $role === 'Pasien' ? '#appointment' : 'register_pasien.php' ?>"
+                <a href="<?= $isLogin && $role === 'Pasien' ? '#appointment' : 'pasien_register.php' ?>"
                   class="more-btn"><span>Buat
                     Janji</span> <i class="bi bi-chevron-right"></i></a>
               </div>
@@ -202,7 +203,7 @@ $jmlPoli = $data['jumlah'];
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row justify-content-center">
           <div class="col-md-6">
-            <form action="src/daftarPoli/add.php" method="post" class="row g-3">
+            <form action="src/pasien/daftarPoli/add.php" method="post" class="row g-3">
               <div class="col-12">
                 <label for="inputNo_RM" class="form-label fw-bold">No. Rekam Medis</label>
                 <input type="text" class="form-control" id="inputNo_RM" name="no_rm" value="<?= $_SESSION['no_rm'] ?>"
@@ -436,9 +437,6 @@ $jmlPoli = $data['jumlah'];
   $result = mysqli_query($mysqli, $query);
 
   while ($data = mysqli_fetch_assoc($result)) {
-    echo "<pre>";
-    print_r($data); // Memeriksa isi data yang dihasilkan dari query
-    echo "</pre>";
   ?>
   <!-- Detail Modal -->
   <div class="modal fade" id="detailModal<?= $data['id'] ?>" tabindex="-1"
@@ -522,7 +520,7 @@ $jmlPoli = $data['jumlah'];
 
       $.ajax({
         type: 'POST',
-        url: 'src/daftarPoli/getJadwal.php',
+        url: 'src/pasien/daftarPoli/getJadwal.php',
         data: {
           id_poli: id_poli
         },

@@ -1,24 +1,37 @@
 <?php
+
 session_start();
-require 'config/database.php';
+include 'config/database.php';
 
-$id_dokter = $_SESSION['id'];
-$role = $_SESSION['role'];
 $isLogin = $_SESSION['isLogin'];
+$nama = $_SESSION['nama'];
+$role = $_SESSION['role'];
 
-$query = "SELECT * FROM dokter WHERE id = '$id_dokter'";
+// menghitung jumlah pasien
+$query = "SELECT COUNT(*) as jumlah FROM pasien";
 $result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$nama = $data['nama'];
-$id_poli = $data['id_poli'];
+$row = mysqli_fetch_assoc($result);
+$jmlPasien = $row['jumlah'];
 
-// mendapatkan nama poli berdasarkan id_poli
-$query = "SELECT * FROM poli WHERE id = '$id_poli'";
+// menghitung jumlah dokter
+$query = "SELECT COUNT(*) as jumlah FROM dokter";
 $result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$nama_poli = $data['nama_poli'];
+$row = mysqli_fetch_assoc($result);
+$jmlDokter = $row['jumlah'];
 
-if (!$isLogin) {
+// menghitung jumlah poli
+$query = "SELECT COUNT(*) as jumlah FROM poli";
+$result = mysqli_query($mysqli, $query);
+$row = mysqli_fetch_assoc($result);
+$jmlPoli = $row['jumlah'];
+
+// menghitung jumlah obat
+$query = "SELECT COUNT(*) as jumlah FROM obat";
+$result = mysqli_query($mysqli, $query);
+$row = mysqli_fetch_assoc($result);
+$jmlObat = $row['jumlah'];
+
+if (!$isLogin && $role != 'admin') {
   header('Location: dokter_login.php');
 }
 
@@ -31,11 +44,10 @@ if (!$isLogin) {
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
-  <title>Dashboard Dokter</title>
+  <title>Dashboard</title>
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon" />
-
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect" />
   <link
@@ -77,6 +89,13 @@ if (!$isLogin) {
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle" href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li>
+        <!-- End Search Icon-->
+
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="assets/img/doctor.jpg" alt="Profile" class="rounded-circle" />
@@ -86,16 +105,7 @@ if (!$isLogin) {
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6><?php echo $nama ?></h6>
-              <span><?php echo $nama_poli ?></span>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="dokter_profile.php">
-                <i class="bi bi-person"></i>
-                <span>Profil Saya</span>
-              </a>
+              <span><?php echo $role ?></span>
             </li>
             <li>
               <hr class="dropdown-divider" />
@@ -119,8 +129,8 @@ if (!$isLogin) {
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
-      <li class="nav-item collapsed">
-        <a class="nav-link collapsed" href="index.php">
+      <li class="nav-item">
+        <a class="nav-link" href="admin_dashboard.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -128,39 +138,47 @@ if (!$isLogin) {
       <!-- End Jadwal Periksa Nav -->
 
       <li class="nav-item">
-        <a class="nav-link" href="dokter_jadwal.php">
-          <i class="bi bi-journal-medical"></i>
-          <span>Jadwal Periksa</span>
+        <a class="nav-link collapsed" href="admin_dokter.php">
+          <i class="bi bi-person-plus"></i>
+          <span>Dokter</span>
         </a>
       </li>
-      <!-- End Jadwal Periksa Nav -->
+      <!-- End Dokter Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_periksa.php">
+        <a class="nav-link collapsed" href="admin_pasien.php">
           <i class="bi bi-people"></i>
-          <span>Daftar Pasien</span>
+          <span>Pasien</span>
         </a>
       </li>
-      <!-- End Daftar Pasien Nav -->
+      <!-- End Pasien Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_riwayat.php">
-          <i class="bi bi-hourglass-split"></i>
-          <span>Riwayat Pasien</span>
+        <a class="nav-link collapsed" href="admin_poli.php">
+          <i class="bi bi-building"></i>
+          <span>Poli</span>
         </a>
       </li>
-      <!-- End Riwayat Pasien Nav -->
+      <!-- End Poli Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="admin_obat.php">
+          <i class="bi bi-capsule"></i>
+          <span>Obat</span>
+        </a>
+      </li>
+      <!-- End Obat Nav -->
     </ul>
   </aside>
   <!-- End Sidebar-->
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Jadwal Periksa</h1>
+      <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Jadwal</li>
+          <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
     </div>
@@ -168,105 +186,94 @@ if (!$isLogin) {
 
     <section class="section dashboard">
       <div class="row">
+
         <!-- Left side columns -->
-        <div class="col-lg-4">
-          <!-- Recent Activity -->
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Tambah Jadwal</h5>
-              <form action="src/dokter/jadwal/add.php" method="post" class="row g-3">
-                <div class="col-12">
-                  <label for="selectHari" class="mb-2">Hari</label>
-                  <select class="form-select" id="selectHari" name="hari">
-                    <?php
-                    $hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-                    foreach ($hari as $h) {
-                    ?>
-                      <option value="<?php echo $h ?>"><?php echo $h ?>
-                      </option>
-                    <?php } ?>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label for="inputJamMulai" class="form-label">Jam Mulai</label>
-                  <input type="time" class="form-control" id="inputJamMulai" name="jam_mulai" />
-                </div>
-                <div class="col-12">
-                  <label for="inputJamSelesai" class="form-label">Jam Selesai</label>
-                  <input type="time" class="form-control" id="inputJamSelesai" name="jam_selesai" />
-                </div>
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary">
-                    Tambah
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <!-- End Recent Activity -->
-        </div>
-        <!-- End Left side columns -->
-
-        <!-- Right side columns -->
-        <div class="col-lg-8">
+        <div class="col-lg-12">
           <div class="row">
-            <!-- Reports -->
-            <div class="col-12">
-              <div class="card">
+            <!-- Pasien Card -->
+            <div class="col-xxl-3 col-md-6">
+              <div class="card info-card pasien-card">
                 <div class="card-body">
-                  <h5 class="card-title">Daftar Jadwal</h5>
+                  <h5 class="card-title">Pasien</h5>
 
-                  <table class="table datatable">
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Hari</th>
-                        <th>Mulai</th>
-                        <th>Selesai</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php
-                      require 'config/database.php';
-                      $no = 1;
-                      $query = "SELECT jadwal_periksa.id, jadwal_periksa.id_dokter, jadwal_periksa.hari, jadwal_periksa.jam_mulai, jadwal_periksa.jam_selesai, jadwal_periksa.status FROM jadwal_periksa INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter' ORDER BY jadwal_periksa.status DESC";
-                      $result = mysqli_query($mysqli, $query);
-                      while ($data = mysqli_fetch_assoc($result)) {
-                      ?>
-                        <tr>
-                          <td><?php echo $no++ ?></td>
-                          <td><?php echo $data['hari'] ?></td>
-                          <td><?php echo $data['jam_mulai'] ?></td>
-                          <td><?php echo $data['jam_selesai'] ?></td>
-                          <td>
-                            <span
-                              class="badge bg-<?= $data['status'] ? 'success' : 'danger' ?>"><?= $data['status'] ? 'Aktif' : 'Tidak Aktif' ?></span>
-                          </td>
-                          <?php if ($data['status']) { ?>
-                            <td>
-                            </td>
-                          <?php } else { ?>
-                            <td>
-                              <form action="src/dokter/jadwal/edit.php" method="post">
-                                <input type="hidden" name="id_jadwal" value="<?php echo $data['id'] ?>">
-                                <button type='submit' class='btn btn-sm btn-success'><i
-                                    class="bi bi-power me-2"></i>Aktifkan</button>
-                              </form>
-                            </td>
-                          <?php } ?>
-                        </tr>
-                      <?php } ?>
-                    </tbody>
-                  </table>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6><?php echo $jmlPasien ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Pasien</span>
+
+                    </div>
+                  </div>
                 </div>
+
               </div>
             </div>
-            <!-- End Reports -->
+            <!-- End Pasien Card -->
+
+            <!-- Dokter Card -->
+            <div class="col-xxl-3 col-md-6">
+              <div class="card info-card dokter-card">
+                <div class="card-body">
+                  <h5 class="card-title">Dokter</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person-plus"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6><?php echo $jmlDokter ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Dokter</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- End Dokter Card -->
+
+            <!-- Poli Card -->
+            <div class="col-xxl-3 col-md-6">
+              <div class="card info-card poli-card">
+                <div class="card-body">
+                  <h5 class="card-title">Poli</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-building"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6><?php echo $jmlPoli ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Poli</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- End Poli Card -->
+            <!-- Obat Card -->
+            <div class="col-xxl-3 col-md-6">
+              <div class="card info-card obat-card">
+                <div class="card-body">
+                  <h5 class="card-title">Obat</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-capsule"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6><?php echo $jmlObat ?></h6><span class="text-muted small pt-2 ps-1">Jumlah Obat</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- End Obat Card -->
           </div>
         </div>
-        <!-- End Right side columns -->
       </div>
     </section>
   </main>

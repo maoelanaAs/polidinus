@@ -1,25 +1,11 @@
 <?php
 session_start();
-require 'config/database.php';
 
-$id_dokter = $_SESSION['id'];
+$nama = $_SESSION['nama'];
 $role = $_SESSION['role'];
-$isLogin = $_SESSION['isLogin'];
 
-$query = "SELECT * FROM dokter WHERE id = '$id_dokter'";
-$result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$nama = $data['nama'];
-$id_poli = $data['id_poli'];
-
-// mendapatkan nama poli berdasarkan id_poli
-$query = "SELECT * FROM poli WHERE id = '$id_poli'";
-$result = mysqli_query($mysqli, $query);
-$data = mysqli_fetch_assoc($result);
-$nama_poli = $data['nama_poli'];
-
-if (!$isLogin) {
-  header('Location: dokter_login.php');
+if ($nama == "") {
+  header("location:dokter_login.php");
 }
 
 ?>
@@ -31,11 +17,10 @@ if (!$isLogin) {
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
-  <title>Dashboard Dokter</title>
+  <title>Dashboard</title>
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon" />
-
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect" />
   <link
@@ -77,6 +62,13 @@ if (!$isLogin) {
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle" href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li>
+        <!-- End Search Icon-->
+
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="assets/img/doctor.jpg" alt="Profile" class="rounded-circle" />
@@ -86,16 +78,7 @@ if (!$isLogin) {
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6><?php echo $nama ?></h6>
-              <span><?php echo $nama_poli ?></span>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="dokter_profile.php">
-                <i class="bi bi-person"></i>
-                <span>Profil Saya</span>
-              </a>
+              <span><?php echo $role ?></span>
             </li>
             <li>
               <hr class="dropdown-divider" />
@@ -119,8 +102,8 @@ if (!$isLogin) {
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
-      <li class="nav-item collapsed">
-        <a class="nav-link collapsed" href="index.php">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="admin_dashboard.php">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -128,39 +111,47 @@ if (!$isLogin) {
       <!-- End Jadwal Periksa Nav -->
 
       <li class="nav-item">
-        <a class="nav-link" href="dokter_jadwal.php">
-          <i class="bi bi-journal-medical"></i>
-          <span>Jadwal Periksa</span>
+        <a class="nav-link collapsed" href="admin_dokter.php">
+          <i class="bi bi-person-plus"></i>
+          <span>Dokter</span>
         </a>
       </li>
-      <!-- End Jadwal Periksa Nav -->
+      <!-- End Dokter Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_periksa.php">
+        <a class="nav-link collapsed" href="admin_pasien.php">
           <i class="bi bi-people"></i>
-          <span>Daftar Pasien</span>
+          <span>Pasien</span>
         </a>
       </li>
-      <!-- End Daftar Pasien Nav -->
+      <!-- End Pasien Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_riwayat.php">
-          <i class="bi bi-hourglass-split"></i>
-          <span>Riwayat Pasien</span>
+        <a class="nav-link" href="admin_poli.php">
+          <i class="bi bi-building"></i>
+          <span>Poli</span>
         </a>
       </li>
-      <!-- End Riwayat Pasien Nav -->
+      <!-- End Poli Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="admin_obat.php">
+          <i class="bi bi-capsule"></i>
+          <span>Obat</span>
+        </a>
+      </li>
+      <!-- End Obat Nav -->
     </ul>
   </aside>
   <!-- End Sidebar-->
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Jadwal Periksa</h1>
+      <h1>Daftar Poli</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Jadwal</li>
+          <li class="breadcrumb-item"><a href="admin_dashboard.php">Home</a></li>
+          <li class="breadcrumb-item active">Poli</li>
         </ol>
       </nav>
     </div>
@@ -173,27 +164,15 @@ if (!$isLogin) {
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Tambah Jadwal</h5>
-              <form action="src/dokter/jadwal/add.php" method="post" class="row g-3">
+              <h5 class="card-title">Tambah Poli</h5>
+              <form action="src/admin/poli/add.php" method="post" class="row g-3">
                 <div class="col-12">
-                  <label for="selectHari" class="mb-2">Hari</label>
-                  <select class="form-select" id="selectHari" name="hari">
-                    <?php
-                    $hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-                    foreach ($hari as $h) {
-                    ?>
-                      <option value="<?php echo $h ?>"><?php echo $h ?>
-                      </option>
-                    <?php } ?>
-                  </select>
+                  <label for="inputNamaPoli" class="form-label">Nama Poli</label>
+                  <input type="text" class="form-control" id="inputNamaPoli" name="nama_poli" />
                 </div>
                 <div class="col-12">
-                  <label for="inputJamMulai" class="form-label">Jam Mulai</label>
-                  <input type="time" class="form-control" id="inputJamMulai" name="jam_mulai" />
-                </div>
-                <div class="col-12">
-                  <label for="inputJamSelesai" class="form-label">Jam Selesai</label>
-                  <input type="time" class="form-control" id="inputJamSelesai" name="jam_selesai" />
+                  <label for="inputKeterangan" class="form-label">Keterangan</label>
+                  <textarea class="form-control" id="inputKeterangan" name="keterangan"></textarea>
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">
@@ -214,16 +193,14 @@ if (!$isLogin) {
             <div class="col-12">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Daftar Jadwal</h5>
+                  <h5 class="card-title">Daftar Poli</h5>
 
                   <table class="table datatable">
                     <thead>
                       <tr>
                         <th>No</th>
-                        <th>Hari</th>
-                        <th>Mulai</th>
-                        <th>Selesai</th>
-                        <th>Status</th>
+                        <th>Nama Poli</th>
+                        <th>Keterangan</th>
                         <th>Aksi</th>
                       </tr>
                     </thead>
@@ -231,32 +208,81 @@ if (!$isLogin) {
                       <?php
                       require 'config/database.php';
                       $no = 1;
-                      $query = "SELECT jadwal_periksa.id, jadwal_periksa.id_dokter, jadwal_periksa.hari, jadwal_periksa.jam_mulai, jadwal_periksa.jam_selesai, jadwal_periksa.status FROM jadwal_periksa INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter' ORDER BY jadwal_periksa.status DESC";
+                      $query = "SELECT * FROM poli";
                       $result = mysqli_query($mysqli, $query);
-                      while ($data = mysqli_fetch_assoc($result)) {
+                      while ($data = mysqli_fetch_array($result)) {
                       ?>
-                        <tr>
-                          <td><?php echo $no++ ?></td>
-                          <td><?php echo $data['hari'] ?></td>
-                          <td><?php echo $data['jam_mulai'] ?></td>
-                          <td><?php echo $data['jam_selesai'] ?></td>
-                          <td>
-                            <span
-                              class="badge bg-<?= $data['status'] ? 'success' : 'danger' ?>"><?= $data['status'] ? 'Aktif' : 'Tidak Aktif' ?></span>
-                          </td>
-                          <?php if ($data['status']) { ?>
-                            <td>
-                            </td>
-                          <?php } else { ?>
-                            <td>
-                              <form action="src/dokter/jadwal/edit.php" method="post">
-                                <input type="hidden" name="id_jadwal" value="<?php echo $data['id'] ?>">
-                                <button type='submit' class='btn btn-sm btn-success'><i
-                                    class="bi bi-power me-2"></i>Aktifkan</button>
-                              </form>
-                            </td>
-                          <?php } ?>
-                        </tr>
+                      <tr>
+                        <td><?php echo $no++ ?></td>
+                        <td><?php echo $data['nama_poli'] ?></td>
+                        <td><?php echo $data['keterangan'] ?></td>
+                        <td>
+                          <button type='button' class='btn btn-sm btn-primary' data-bs-toggle="modal"
+                            data-bs-target="#editModal<?php echo $data['id'] ?>"><i class="bi bi-pencil"></i></button>
+                          <button type='button' class='btn btn-sm btn-danger' data-bs-toggle="modal"
+                            data-bs-target="#deleteModal<?php echo $data['id'] ?>"><i class="bi bi-trash"></i></button>
+                        </td>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editModal<?php echo $data['id']; ?>" tabindex="-1"
+                          aria-labelledby="updateModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">Ubah Data Poli</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/admin/poli/edit.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id']; ?>">
+
+                                  <div class="col-12 mb-3">
+                                    <label for="editNamaPoli" class="form-label">Nama Poli</label>
+                                    <input type="text" class="form-control" id="editNamaPoli"
+                                      value="<?php echo $data['nama_poli'] ?>" name="nama_poli" />
+                                  </div>
+                                  <div class="col-12 mb-3">
+                                    <label for="editKeterangan" class="form-label">Keterangan</label>
+                                    <textarea class="form-control" id="editKeterangan" rows="3"
+                                      name="keterangan"><?php echo $data['keterangan'] ?></textarea>
+                                  </div>
+                                  <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                      Ubah
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Update Modal-->
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?php echo $data['id'] ?>" tabindex="-1">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Hapus Data Poli</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="src/admin/poli/delete.php" method="post">
+                                  <input type="hidden" class="form-control" id="id" name="id"
+                                    value="<?php echo $data['id'] ?>" required>
+                                  <p>Apakah anda yakin untuk menghapus data
+                                    <b><?php echo $data['nama_poli'] ?></b>?<span></span>
+                                  </p>
+                                  <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End Delete Modal -->
+                      </tr>
                       <?php } ?>
                     </tbody>
                   </table>

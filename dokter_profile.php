@@ -26,7 +26,7 @@ $alamat = $data['alamat'];
 $no_hp = $data['no_hp'];
 
 if (!$isLogin) {
-  header('Location: login_dokter.php');
+  header('Location: dokter_login.php');
 }
 
 ?>
@@ -143,7 +143,7 @@ if (!$isLogin) {
       <!-- End Jadwal Periksa Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_pasien.php">
+        <a class="nav-link collapsed" href="dokter_periksa.php">
           <i class="bi bi-people"></i>
           <span>Daftar Pasien</span>
         </a>
@@ -207,7 +207,7 @@ if (!$isLogin) {
               <div class="tab-content pt-2">
                 <div class="tab-pane show active fade profile-edit pt-3" id="profile-edit">
                   <!-- Profile Edit Form -->
-                  <form action="src/profile/update.php" method="post">
+                  <form action="src/dokter/profile/update.php" method="post">
                     <input type="hidden" name="id" value="<?= $id_dokter ?>" />
                     <div class="row mb-3">
                       <label for="inputNama" class="col-md-4 col-lg-3 col-form-label">Nama Lengkap</label>
@@ -230,7 +230,7 @@ if (!$isLogin) {
                     <div class="row mb-3">
                       <label for="selectPoli" class="col-md-4 col-lg-3 col-form-label">Posisi Poli</label>
                       <div class="col-md-8 col-lg-9">
-                        <!-- <select name="poli" id="selectPoli" class="form-control" aria-readonly="">
+                        <select name="poli" id="selectPoli" class="form-control" style="pointer-events: none;">
                           <?php
                           $query = "SELECT * FROM poli";
                           $result = mysqli_query($mysqli, $query);
@@ -240,9 +240,9 @@ if (!$isLogin) {
                             <?= $dataPoli['nama_poli'] ?>
                           </option>
                           <?php } ?>
-                        </select> -->
-                        <input type="text" class="form-control" value="<?= $nama_poli ?>" name="poli" id="selectPoli"
-                          readonly />
+                        </select>
+                        <!-- <input type="text" class="form-control" value="<?= $nama_poli ?>" name="poli" id="selectPoli"
+                          readonly /> -->
                       </div>
                     </div>
                     <div class="text-center">
@@ -256,7 +256,7 @@ if (!$isLogin) {
 
                 <div class="tab-pane fade pt-3" id="profile-change-password">
                   <!-- Change Password Form -->
-                  <form action="src/profile/password.php" method="post">
+                  <form action="src/dokter/profile/password.php" method="post">
                     <input type="hidden" name="id" value="<?= $id_dokter ?>" />
                     <div class="row mb-3">
                       <label for="passwordSekarang" class="col-md-4 col-lg-3 col-form-label">Kata Sandi

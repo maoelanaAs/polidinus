@@ -143,7 +143,7 @@ if (!$isLogin) {
       <!-- End Jadwal Periksa Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="dokter_periksa.php">
+        <a class="nav-link" href="dokter_periksa.php">
           <i class="bi bi-people"></i>
           <span>Daftar Pasien</span>
         </a>
@@ -151,7 +151,7 @@ if (!$isLogin) {
       <!-- End Daftar Pasien Nav -->
 
       <li class="nav-item">
-        <a class="nav-link " href="dokter_riwayat.php">
+        <a class="nav-link collapsed" href="dokter_riwayat.php">
           <i class="bi bi-hourglass-split"></i>
           <span>Riwayat Pasien</span>
         </a>
@@ -163,111 +163,142 @@ if (!$isLogin) {
 
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Riwayat Pasien</h1>
+      <h1>Daftar Pasien</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Riwayat</li>
+          <li class="breadcrumb-item active">Periksa</li>
         </ol>
       </nav>
     </div>
     <!-- End Page Title -->
 
-    <section class="section">
+    <section class="section dashboard">
       <div class="row">
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Daftar Riwayat Pasien</h5>
+              <h5 class="card-title">Periksa Pasien</h5>
 
-              <!-- Table with stripped rows -->
               <table class="table datatable">
                 <thead>
                   <tr>
                     <th>No</th>
                     <th>No. Rekam Medis</th>
                     <th>Nama Pasien</th>
-                    <th>NIK</th>
-                    <th>No. Telepon</th>
-                    <th>Alamat</th>
+                    <th>Keluhan</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
                   $no = 1;
-                  $query = "SELECT daftar_poli.status, periksa.id, pasien.alamat, pasien.id as idPasien, pasien.no_ktp, pasien.no_hp, pasien.no_rm, periksa.tgl_periksa, pasien.nama as namaPasien, dokter.nama, daftar_poli.keluhan, periksa.catatan, GROUP_CONCAT(obat.nama_obat) as namaObat, SUM(obat.harga) AS hargaObat FROM detail_periksa INNER JOIN periksa ON detail_periksa.id_periksa = periksa.id INNER JOIN daftar_poli ON periksa.id_daftar_poli = daftar_poli.id INNER JOIN pasien ON daftar_poli.id_pasien = pasien.id INNER JOIN obat ON detail_periksa.id_obat = obat.id INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter' AND daftar_poli.status = '1' GROUP BY pasien.id";
+                  $query = "SELECT pasien.nama, pasien.no_rm, daftar_poli.keluhan, daftar_poli.status, daftar_poli.id FROM daftar_poli INNER JOIN pasien ON daftar_poli.id_pasien = pasien.id INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter'";
                   $result = mysqli_query($mysqli, $query);
 
                   while ($data = mysqli_fetch_assoc($result)) {
                   ?>
-                    <tr>
-                      <td>1</td>
-                      <td><?= $data['no_rm'] ?></td>
-                      <td><?= $data['namaPasien'] ?></td>
-                      <td><?= $data['no_ktp'] ?></td>
-                      <td><?= $data['no_hp'] ?></td>
-                      <td><?= $data['alamat'] ?></td>
-                      <td>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                          data-bs-target="#historyModal<?= $data['id'] ?>">
-                          <i class="bi bi-eye me-2"></i>Riwayat
-                        </button>
-                        <div class="modal fade" id="historyModal<?= $data['id'] ?>" data-bs-backdrop="static"
-                          data-bs-keyboard="false" tabindex="-1" aria-labelledby="historyModal<?= $data['id'] ?>Label"
-                          aria-hidden="true">
-                          <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="historyModal<?= $data['id'] ?>Label">
-                                  Riwayat Pasien <?= $data['namaPasien'] ?>
-                                </h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                  aria-label="Close"></button>
+                  <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= $data['no_rm'] ?></td>
+                    <td><?= $data['nama'] ?></td>
+                    <td><?= $data['keluhan'] ?></td>
+                    <td>
+                      <button type='button' class='btn btn-sm btn-warning' data-bs-toggle="modal"
+                        data-bs-target="#<?= $data['status'] == 0 ? 'periksaModal' . $data['id'] : 'editModal' . $data['id'] ?>"><i
+                          class="bi bi-<?= $data['status'] == 0 ? 'eye' : 'pencil' ?>"></i></button>
+                    </td>
+                    <!-- Periksa Modal -->
+                    <div class="modal fade" id="periksaModal<?= $data['id']; ?>" tabindex="-1"
+                      aria-labelledby="periksaModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="periksaModalLabel">Periksa Pasien</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="src/dokter/periksa/check.php" method="post">
+                              <input type="hidden" class="form-control" id="id" name="id" value="<?= $data['id']; ?>">
+                              <div class="mb-3">
+                                <label for="namaPasien" class="form-label">Nama Pasien</label>
+                                <input type="text" class="form-control" id="namaPasien" value="<?= $data['nama'] ?>"
+                                  name="nama" readonly />
                               </div>
-                              <div class="modal-body">
-                                <table class="table datatable">
-                                  <thead>
-                                    <tr>
-                                      <th>No</th>
-                                      <td>Tanggal Periksa</td>
-                                      <td>Nama Pasien</td>
-                                      <td>Nama Dokter</td>
-                                      <td>Keluhan</td>
-                                      <td>Obat</td>
-                                      <td>Biaya</td>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <?php
-                                    $idPasien = $data['idPasien'];
-                                    $nomor = 1;
-                                    $ambilData = "SELECT detail_periksa.id as idDetailPeriksa, periksa.tgl_periksa, pasien.nama as namaPasien, dokter.nama, daftar_poli.keluhan, periksa.catatan, GROUP_CONCAT(obat.nama_obat) as namaObat, periksa.biaya_periksa AS hargaObat FROM detail_periksa INNER JOIN periksa ON detail_periksa.id_periksa = periksa.id  INNER JOIN daftar_poli ON periksa.id_daftar_poli = daftar_poli.id INNER JOIN pasien ON daftar_poli.id_pasien = pasien.id INNER JOIN obat ON detail_periksa.id_obat = obat.id INNER JOIN jadwal_periksa ON daftar_poli.id_jadwal = jadwal_periksa.id INNER JOIN dokter ON jadwal_periksa.id_dokter = dokter.id WHERE dokter.id = '$id_dokter' AND pasien.id = '$idPasien' GROUP BY pasien.id, periksa.tgl_periksa";
-                                    $results = mysqli_query($mysqli, $ambilData);
-                                    while ($datas = mysqli_fetch_assoc($results)) {
+                              <div class="mb-3">
+                                <label for="tanggal_periksa" class="form-label">Tanggal Periksa</label>
+                                <input type="datetime-local" class="form-control" id="tanggal_periksa" name="tanggal"
+                                  required />
+                              </div>
+                              <div class="mb-3">
+                                <label for="catatan" class="form-label">Catatan</label>
+                                <textarea class="form-control" id="catatan" name="catatan" required></textarea>
+                              </div>
+                              <div class="mb-3">
+                                <label for="multiple-select-field" class="form-label">Obat</label>
+                                <select id="multiple-select-field" multiple data-placeholder="Pilih Obat" name="obat[]">
+                                  <?php
+                                    $getObat = "SELECT * FROM obat";
+                                    $queryObat = mysqli_query($mysqli, $getObat);
+                                    while ($datas = mysqli_fetch_assoc($queryObat)) {
                                     ?>
-                                      <tr>
-                                        <td><?php echo $nomor++; ?></td>
-                                        <td><?php echo $datas['tgl_periksa'] ?></td>
-                                        <td><?php echo $datas['namaPasien'] ?></td>
-                                        <td><?php echo $datas['nama'] ?></td>
-                                        <td style="white-space: pre-line;"><?php echo $datas['keluhan'] ?></td>
-                                        <td style="white-space: pre-line;"><?php echo $datas['namaObat'] ?></td>
-                                        <td><?php echo $datas['hargaObat'] ?></td>
-                                      </tr>
-                                    <?php } ?>
-                                  </tbody>
-                                </table>
+                                  <option value="<?php echo $datas['id'] ?>">
+                                    <?php echo $datas['nama_obat'] ?></option>
+                                  <?php } ?>
+                                </select>
                               </div>
-                            </div>
+                              <div class="text-center">
+                                <button type="submit" class="btn btn-primary">
+                                  Periksa
+                                </button>
+                              </div>
+                            </form>
                           </div>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
+                    <!-- End Periksa Modal-->
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editModal<?= $data['id']; ?>" tabindex="-1"
+                      aria-labelledby="editModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Ubah Catatan Periksa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="src/dokter/periksa/edit.php" method="post">
+                              <input type="hidden" class="form-control" id="id" name="id" value="<?= $data['id']; ?>">
+                              <div class="mb-3">
+                                <label for="namaPasien" class="form-label">Nama Pasien</label>
+                                <input type="text" class="form-control" id="namaPasien" value="<?= $data['nama'] ?>"
+                                  name="nama" readonly />
+                              </div>
+                              <div class="mb-3">
+                                <label for="tanggal_periksa" class="form-label">Tanggal Periksa</label>
+                                <input type="datetime-local" class="form-control" id="tanggal_periksa" name="tanggal"
+                                  required />
+                              </div>
+                              <div class="mb-3">
+                                <label for="catatan" class="form-label">Catatan</label>
+                                <textarea class="form-control" id="catatan" name="catatan" required></textarea>
+                              </div>
+                              <div class="text-center">
+                                <button type="submit" class="btn btn-primary">
+                                  Ubah Catatan Periksa
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End Edit Modal -->
+                  </tr>
                   <?php } ?>
                 </tbody>
               </table>
-              <!-- End Table with stripped rows -->
             </div>
           </div>
         </div>
@@ -308,6 +339,24 @@ if (!$isLogin) {
 
   <!-- Template Main JS File -->
   <script src="assets/js/script.js"></script>
+  <script>
+  $(function() {
+    // Inisialisasi Select2 ketika modal dibuka
+    $(document).on('shown.bs.modal', function(e) {
+      const modal = $(e.target); // Modal yang saat ini dibuka
+      const selectElement = modal.find('#multiple-select-field');
+      if (selectElement.length) {
+        selectElement.select2({
+          theme: "bootstrap-5",
+          width: selectElement.data('width') ? selectElement.data('width') : selectElement.hasClass(
+            'w-100') ? '100%' : 'style',
+          placeholder: selectElement.data('placeholder'),
+          closeOnSelect: false,
+        });
+      }
+    });
+  });
+  </script>
 </body>
 
 </html>
